@@ -1,0 +1,29 @@
+﻿@{
+    var products = ViewBag.Products as List<Product>;
+}
+<h2> Danh sach</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (products != null)
+        {
+            foreach (var p in products)
+            {
+                <tr>
+                    <td>@p.Id</td>
+                    <td>@p.Name</td>
+                    <td>@p.Price</td>
+                    <td>@p.Description</td>
+                </tr>
+            
+            }
+        }
+    </tbody>
+</table>
