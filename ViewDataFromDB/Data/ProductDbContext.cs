@@ -8,5 +8,7 @@ namespace ViewDataFromDB.Data
         public ProductDbContext(DbContextOptions<ProductDbContext> options) : base(options) 
         { }
         public DbSet<Product> products { get; set; }
+        public DbSet<SuKien> suKiens { get; set; }
+        public DbSet<Ve>    ves { get; set; }   
     }
 }

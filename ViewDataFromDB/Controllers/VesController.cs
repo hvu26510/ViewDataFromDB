@@ -10,25 +10,23 @@ using ViewDataFromDB.Models;
 
 namespace ViewDataFromDB.Controllers
 {
-    [Route("SanPham")]
-    public class ProductsController : Controller
+    public class VesController : Controller
     {
         private readonly ProductDbContext _context;
 
-        public ProductsController(ProductDbContext context)
+        public VesController(ProductDbContext context)
         {
             _context = context;
         }
 
-        // GET: Products
-        [Route("DanhSach")]
+        // GET: Ves
         public async Task<IActionResult> Index()
         {
-            return View(await _context.products.ToListAsync());
+            var productDbContext = _context.ves.Include(v => v.SuKien);
+            return View(await productDbContext.ToListAsync());
         }
 
-        // GET: Products/Details/5
-        [Route("ChiTiet/{id:int:min(1)}")]
+        // GET: Ves/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -36,39 +34,45 @@ namespace ViewDataFromDB.Controllers
                 return NotFound();
             }
 
-            var product = await _context.products
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            var ve = await _context.ves
+                .Include(v => v.SuKien)
+                .FirstOrDefaultAsync(m => m.MaVe == id);
+            if (ve == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(ve);
         }
 
-        // GET: Products/Create
+        // GET: Ves/Create
         public IActionResult Create()
         {
+            ViewData["MaSuKien"] = new SelectList(_context.suKiens, "ID", "Ten");
             return View();
         }
 
-        // POST: Products/Create
+        // POST: Ves/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Description")] Product product)
+        public async Task<IActionResult> Create([Bind("MaVe,LoaiVe,GiaVe,MaSuKien")] Ve ve)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
+                _context.Add(ve);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index","Home");
+
             }
-            return View(product);
+            ViewData["MaSuKien"] = new SelectList(_context.suKiens, "ID", "DiaDiem", ve.MaSuKien);
+            return View(ve);
+
         }
 
-        // GET: Products/Edit/5
+        // GET: Ves/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -76,22 +80,23 @@ namespace ViewDataFromDB.Controllers
                 return NotFound();
             }
 
-            var product = await _context.products.FindAsync(id);
-            if (product == null)
+            var ve = await _context.ves.FindAsync(id);
+            if (ve == null)
             {
                 return NotFound();
             }
-            return View(product);
+            ViewData["MaSuKien"] = new SelectList(_context.suKiens, "ID", "DiaDiem", ve.MaSuKien);
+            return View(ve);
         }
 
-        // POST: Products/Edit/5
+        // POST: Ves/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Description")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("MaVe,LoaiVe,GiaVe,MaSuKien")] Ve ve)
         {
-            if (id != product.Id)
+            if (id != ve.MaVe)
             {
                 return NotFound();
             }
@@ -100,12 +105,12 @@ namespace ViewDataFromDB.Controllers
             {
                 try
                 {
-                    _context.Update(product);
+                    _context.Update(ve);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.Id))
+                    if (!VeExists(ve.MaVe))
                     {
                         return NotFound();
                     }
@@ -116,10 +121,11 @@ namespace ViewDataFromDB.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(product);
+            ViewData["MaSuKien"] = new SelectList(_context.suKiens, "ID", "DiaDiem", ve.MaSuKien);
+            return View(ve);
         }
 
-        // GET: Products/Delete/5
+        // GET: Ves/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -127,34 +133,35 @@ namespace ViewDataFromDB.Controllers
                 return NotFound();
             }
 
-            var product = await _context.products
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            var ve = await _context.ves
+                .Include(v => v.SuKien)
+                .FirstOrDefaultAsync(m => m.MaVe == id);
+            if (ve == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(ve);
         }
 
-        // POST: Products/Delete/5
+        // POST: Ves/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.products.FindAsync(id);
-            if (product != null)
+            var ve = await _context.ves.FindAsync(id);
+            if (ve != null)
             {
-                _context.products.Remove(product);
+                _context.ves.Remove(ve);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(int id)
+        private bool VeExists(int id)
         {
-            return _context.products.Any(e => e.Id == id);
+            return _context.ves.Any(e => e.MaVe == id);
         }
     }
 }

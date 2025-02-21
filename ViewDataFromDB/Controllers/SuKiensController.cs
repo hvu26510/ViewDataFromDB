@@ -10,25 +10,22 @@ using ViewDataFromDB.Models;
 
 namespace ViewDataFromDB.Controllers
 {
-    [Route("SanPham")]
-    public class ProductsController : Controller
+    public class SuKiensController : Controller
     {
         private readonly ProductDbContext _context;
 
-        public ProductsController(ProductDbContext context)
+        public SuKiensController(ProductDbContext context)
         {
             _context = context;
         }
 
-        // GET: Products
-        [Route("DanhSach")]
+        // GET: SuKiens
         public async Task<IActionResult> Index()
         {
-            return View(await _context.products.ToListAsync());
+            return View(await _context.suKiens.ToListAsync());
         }
 
-        // GET: Products/Details/5
-        [Route("ChiTiet/{id:int:min(1)}")]
+        // GET: SuKiens/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -36,39 +33,39 @@ namespace ViewDataFromDB.Controllers
                 return NotFound();
             }
 
-            var product = await _context.products
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            var suKien = await _context.suKiens
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (suKien == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(suKien);
         }
 
-        // GET: Products/Create
+        // GET: SuKiens/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Products/Create
+        // POST: SuKiens/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Description")] Product product)
+        public async Task<IActionResult> Create([Bind("ID,Ten,NgayToChuc,DiaDiem")] SuKien suKien)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(product);
+            //if (ModelState.IsValid)
+            //{
+                _context.Add(suKien);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
-            return View(product);
+            //}
+            //return View(suKien);
         }
 
-        // GET: Products/Edit/5
+        // GET: SuKiens/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -76,22 +73,22 @@ namespace ViewDataFromDB.Controllers
                 return NotFound();
             }
 
-            var product = await _context.products.FindAsync(id);
-            if (product == null)
+            var suKien = await _context.suKiens.FindAsync(id);
+            if (suKien == null)
             {
                 return NotFound();
             }
-            return View(product);
+            return View(suKien);
         }
 
-        // POST: Products/Edit/5
+        // POST: SuKiens/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Description")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Ten,NgayToChuc,DiaDiem")] SuKien suKien)
         {
-            if (id != product.Id)
+            if (id != suKien.ID)
             {
                 return NotFound();
             }
@@ -100,12 +97,12 @@ namespace ViewDataFromDB.Controllers
             {
                 try
                 {
-                    _context.Update(product);
+                    _context.Update(suKien);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.Id))
+                    if (!SuKienExists(suKien.ID))
                     {
                         return NotFound();
                     }
@@ -116,10 +113,10 @@ namespace ViewDataFromDB.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(product);
+            return View(suKien);
         }
 
-        // GET: Products/Delete/5
+        // GET: SuKiens/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -127,34 +124,34 @@ namespace ViewDataFromDB.Controllers
                 return NotFound();
             }
 
-            var product = await _context.products
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            var suKien = await _context.suKiens
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (suKien == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(suKien);
         }
 
-        // POST: Products/Delete/5
+        // POST: SuKiens/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.products.FindAsync(id);
-            if (product != null)
+            var suKien = await _context.suKiens.FindAsync(id);
+            if (suKien != null)
             {
-                _context.products.Remove(product);
+                _context.suKiens.Remove(suKien);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(int id)
+        private bool SuKienExists(int id)
         {
-            return _context.products.Any(e => e.Id == id);
+            return _context.suKiens.Any(e => e.ID == id);
         }
     }
 }
